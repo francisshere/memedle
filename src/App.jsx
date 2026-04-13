@@ -1,46 +1,47 @@
+// src/App.jsx
 import React, { useState, useEffect } from "react";
-import { getRandomWord } from "./MemeData";
+import { getRandomMeme } from "./MemeData";
 
 const MAX_GUESSES = 6;
 
-// Helper function to evaluate the guess against the target word
 const getGuessStatuses = (guess, target) => {
   const statuses = Array(guess.length).fill("absent");
   const targetChars = target.split("");
 
-  // First pass: find 'correct' letters (right letter, right spot)
   for (let i = 0; i < guess.length; i++) {
     if (guess[i] === target[i]) {
       statuses[i] = "correct";
-      targetChars[i] = null; // Mark as used
+      targetChars[i] = null; 
     }
   }
 
-  // Second pass: find 'present' letters (right letter, wrong spot)
   for (let i = 0; i < guess.length; i++) {
     if (statuses[i] !== "correct" && targetChars.includes(guess[i])) {
       statuses[i] = "present";
-      targetChars[targetChars.indexOf(guess[i])] = null; // Mark as used
+      targetChars[targetChars.indexOf(guess[i])] = null; 
     }
   }
   return statuses;
 };
 
 export default function App() {
-  const [targetWord, setTargetWord] = useState("");
-  const [guesses, setGuesses] = useState([]); // Array of strings representing completed rows
+  const [targetMeme, setTargetMeme] = useState(null); // Now holds { word, image }
+  const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [gameStatus, setGameStatus] = useState("playing"); // 'playing', 'won', 'lost'
+  const [gameStatus, setGameStatus] = useState("playing"); 
 
   // Initialize the game
   useEffect(() => {
-    setTargetWord(getRandomWord());
+    setTargetMeme(getRandomMeme());
   }, []);
 
   // Handle Physical Keyboard Input
   useEffect(() => {
+    if (!targetMeme) return;
+    const targetWord = targetMeme.word.replace("-", ""); // Ignore hyphens in words like ROLL-SAFE
+
     const handleKeyDown = (e) => {
-      if (gameStatus !== "playing" || !targetWord) return;
+      if (gameStatus !== "playing") return;
 
       if (e.key === "Enter") {
         if (currentGuess.length === targetWord.length) {
@@ -52,7 +53,7 @@ export default function App() {
           } else if (newGuesses.length >= MAX_GUESSES) {
             setGameStatus("lost");
           }
-          setCurrentGuess(""); // Reset current row
+          setCurrentGuess(""); 
         }
       } else if (e.key === "Backspace") {
         setCurrentGuess((prev) => prev.slice(0, -1));
@@ -63,19 +64,34 @@ export default function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess, gameStatus, targetWord, guesses]);
+  }, [currentGuess, gameStatus, targetMeme, guesses]);
 
-  // Prevent rendering until targetWord is selected
-  if (!targetWord) return null;
+  // Wait until the meme is loaded before rendering the UI
+  if (!targetMeme) return (
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      Loading...
+    </div>
+  );
+
+  const targetWord = targetMeme.word.replace("-", "");
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center pt-10 px-4">
-      <header className="mb-8 text-center">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center pt-10 px-4 pb-10">
+      <header className="mb-6 text-center">
         <h1 className="text-4xl font-extrabold tracking-wider mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
           MEME-DLE
         </h1>
         <p className="text-gray-400 text-sm">Type your guess and press Enter</p>
       </header>
+
+      {/* Meme Image Hint */}
+      <div className="mb-8 w-full max-w-sm flex justify-center">
+        <img 
+          src={targetMeme.image} 
+          alt="Guess this meme" 
+          className="max-w-full h-48 sm:h-64 object-contain rounded-lg border-4 border-gray-700 shadow-2xl bg-gray-800"
+        />
+      </div>
 
       {/* Game Grid */}
       <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-sm">
@@ -87,7 +103,7 @@ export default function App() {
               {guess.split("").map((letter, i) => (
                 <div
                   key={i}
-                  className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-2xl font-bold uppercase border-2 
+                  className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl font-bold uppercase border-2 
                     ${statuses[i] === "correct" ? "bg-green-500 border-green-500" : ""}
                     ${statuses[i] === "present" ? "bg-yellow-500 border-yellow-500" : ""}
                     ${statuses[i] === "absent" ? "bg-gray-700 border-gray-700 text-gray-300" : ""}
@@ -106,8 +122,8 @@ export default function App() {
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className={`w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center text-2xl font-bold uppercase border-2 border-gray-600 
-                  ${currentGuess[i] ? "border-gray-400 animate-pulse" : ""}`}
+                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl font-bold uppercase border-2 border-gray-600 bg-gray-800
+                  ${currentGuess[i] ? "border-gray-300 animate-pulse" : ""}`}
               >
                 {currentGuess[i] || ""}
               </div>
@@ -123,7 +139,7 @@ export default function App() {
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className="w-12 h-12 sm:w-14 sm:h-14 border-2 border-gray-700 bg-gray-800/50 rounded-sm"
+                className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gray-700 bg-gray-800/30 rounded-sm"
               ></div>
             ))}
           </div>

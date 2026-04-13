@@ -7,7 +7,7 @@ export const memeData = [
   { word: "FINE", image: "https://i.imgflip.com/1bhm.jpg" }
 ];
 
-export const getRandomWord = () => {
-  const randomIndex = Math.floor(Math.random() * memeWords.length);
-  return memeWords[randomIndex];
+export const getRandomMeme = () => {
+  const randomIndex = Math.floor(Math.random() * memeData.length);
+  return memeData[randomIndex];
 };

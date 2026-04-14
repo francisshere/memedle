@@ -36,6 +36,7 @@ export default function App() {
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameStatus, setGameStatus] = useState("playing"); 
+  const [toast, setToast] = useState("");
 
   // Dark Mode
   // Initialize state by checking localStorage first
@@ -60,10 +61,19 @@ export default function App() {
     const targetWord = targetMeme.word.replace("-", "");
 
     if (key === "ENTER") {
+
+      // too short word
+      if (currentGuess.length < targetWord.length) {
+        setToast("TOO SHORT");
+        setTimeout(() => setToast(""), 2000); // 
+        return;
+      }
+
       if (currentGuess.length === targetWord.length) {
         const newGuesses = [...guesses, currentGuess];
         setGuesses(newGuesses);
         
+        // full word logic
         if (currentGuess === targetWord) {
           setGameStatus("won");
         } else if (newGuesses.length >= MAX_GUESSES) {
@@ -143,6 +153,13 @@ return (
               <span className={dleTextColor}> - DLE</span>
             </h1>
       </header>
+
+      {/* Too short Toast */}
+      {toast && (
+        <div className="fixed bottom-120 z-50 bg-white/90 text-black px-10 py-4 rounded-lg shadow-sm font-bold text-sm tracking-widest uppercase transition-opacity duration-300">
+          {toast}
+        </div>
+      )}
 
       {/* Meme Image Hint */}
       <div className="mb-6 sm:mb-8 w-full max-w-sm flex justify-center">

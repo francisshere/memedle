@@ -46,7 +46,7 @@ export const memeData = [
   { word: "GABEN", image: "https://i.imgflip.com/6iees.jpg" },
   { word: "CHEEMS", image: "https://i.imgflip.com/3nzkub.png" },
   { word: "SCIENCE", image: "https://i.imgflip.com/xm49.jpg" },
-  { word: "SIGMA", image: "https://i.imgflip.com/7aglg1.mp4" },
+  { word: "ALPHA", image: "https://i.imgflip.com/89tqzj.jpg" },
   { word: "JERMA", image: "https://i.imgflip.com/4w3yao.jpg" },
   { word: "COPIUM", image: "https://i.imgflip.com/4h8d1x.png" },
 ];

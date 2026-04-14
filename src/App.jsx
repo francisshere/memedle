@@ -30,6 +30,9 @@ export default function App() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameStatus, setGameStatus] = useState("playing"); 
 
+  // Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   // Initialize the game
   useEffect(() => {
     setTargetMeme(getRandomMeme());
@@ -75,13 +78,34 @@ export default function App() {
 
   const targetWord = targetMeme.word.replace("-", "");
 
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center pt-10 px-4 pb-10">
-      <header className="mb-6 text-center">
-        <h1 className="text-4xl font-extrabold tracking-wider mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-          MEME-DLE
+  // dynamic theme colors
+  const bgColor = isDarkMode ? "bg-[#333333]" : "bg-[#E0A016]";
+  const memeTextColor = isDarkMode ? "text-[#09CD0F]" : "text-[#06810A]";
+  const dleTextColor = "text-[#FFF9F9]";
+
+return (
+    <div className={`min-h-screen flex flex-col items-center pt-10 px-4 pb-10 transition-colors duration-300 ${bgColor} font-imprima relative`}>
+      
+      {/* Theme Toggle Icon (Upper Right) */}
+      <button 
+        onClick={() => setIsDarkMode(!isDarkMode)}
+        className="absolute top-6 right-6 p-2 rounded-full hover:bg-black/20 transition-colors"
+      >
+        {isDarkMode ? (
+          // Sun Icon (Dark Mode)
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        ) : (
+          // Moon Icon (Light Mode)
+          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        )}
+      </button>
+
+      {/* Title */}
+      <header className="mb-6 text-center w-full max-w-sm relative">
+        <h1 className="text-5xl tracking-widest mt-2">
+          <span className={memeTextColor}>MEME</span>
+          <span className={dleTextColor}> - DLE</span>
         </h1>
-        <p className="text-gray-400 text-sm">Type your guess and press Enter</p>
       </header>
 
       {/* Meme Image Hint */}
@@ -89,41 +113,50 @@ export default function App() {
         <img 
           src={targetMeme.image} 
           alt="Guess this meme" 
-          className="max-w-full h-48 sm:h-64 object-contain rounded-lg border-4 border-gray-700 shadow-2xl bg-gray-800"
+          className="max-w-full h-32 sm:h-48 object-cover rounded-sm border-none opacity-80"
         />
       </div>
 
       {/* Game Grid */}
-      <div className="flex flex-col gap-2 w-full max-w-xs sm:max-w-sm">
-        {/* Render Past Guesses */}
+      <div className="flex flex-col gap-[6px] w-full items-center">
         {guesses.map((guess, rowIndex) => {
           const statuses = getGuessStatuses(guess, targetWord);
           return (
-            <div key={rowIndex} className="flex gap-2 justify-center">
-              {guess.split("").map((letter, i) => (
-                <div
-                  key={i}
-                  className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl font-bold uppercase border-2 
-                    ${statuses[i] === "correct" ? "bg-green-500 border-green-500" : ""}
-                    ${statuses[i] === "present" ? "bg-yellow-500 border-yellow-500" : ""}
-                    ${statuses[i] === "absent" ? "bg-gray-700 border-gray-700 text-gray-300" : ""}
-                  `}
-                >
-                  {letter}
-                </div>
-              ))}
+            <div key={rowIndex} className="flex gap-[6px] justify-center">
+              {guess.split("").map((letter, i) => {
+                // Determine evaluated colors
+                let tileColor = "bg-[#D9D9D9] text-black"; // Default from Figma
+
+                if (statuses[i] === "correct") {
+                  tileColor = "bg-green-600 text-white";
+                } else if (statuses[i] === "present") {
+                  // dark mode = yellow, light mode = blue
+                  tileColor = isDarkMode ? "bg-yellow-500 text-white" : "bg-blue-500 text-white";
+                } else if (statuses[i] === "absent") {
+                  tileColor = "bg-gray-600 text-white";
+                }
+
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-center text-xl font-bold uppercase ${tileColor} w-[62px] h-[62px]`}
+                  >
+                    {letter}
+                  </div>
+                );
+              })}
             </div>
           );
         })}
 
         {/* Render Current Guess Row */}
         {gameStatus === "playing" && guesses.length < MAX_GUESSES && (
-          <div className="flex gap-2 justify-center">
+          <div className="flex gap-[6px] justify-center">
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className={`w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-xl sm:text-2xl font-bold uppercase border-2 border-gray-600 bg-gray-800
-                  ${currentGuess[i] ? "border-gray-300 animate-pulse" : ""}`}
+                className={`flex items-center justify-center text-xl font-bold uppercase bg-[#D9D9D9] text-black w-[62px] h-[62px]
+                  ${currentGuess[i] ? "ring-2 ring-black/30" : ""}`}
               >
                 {currentGuess[i] || ""}
               </div>
@@ -135,29 +168,23 @@ export default function App() {
         {Array.from({
           length: Math.max(0, MAX_GUESSES - guesses.length - (gameStatus === "playing" ? 1 : 0)),
         }).map((_, rowIndex) => (
-          <div key={`empty-${rowIndex}`} className="flex gap-2 justify-center">
+          <div key={`empty-${rowIndex}`} className="flex gap-[6px] justify-center">
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-gray-700 bg-gray-800/30 rounded-sm"
+                className="bg-[#D9D9D9] w-[62px] h-[62px]"
               ></div>
             ))}
           </div>
         ))}
       </div>
 
-      {/* Game Over Messages */}
-      {gameStatus === "won" && (
-        <div className="mt-8 p-4 bg-green-500/20 border border-green-500 rounded-lg text-center font-bold animate-bounce">
-          Giga Chad Move! You guessed it!
-        </div>
-      )}
-      {gameStatus === "lost" && (
-        <div className="mt-8 p-4 bg-red-500/20 border border-red-500 rounded-lg text-center">
-          <p className="font-bold mb-1">Major Cope.</p>
-          <p>The word was: <span className="text-xl text-red-400">{targetWord}</span></p>
-        </div>
-      )}
+      {/* Game Over Block (replaces the green box in Figma) */}
+      <div className="mt-2 w-full max-w-xs h-16 bg-[#365e1b] flex items-center justify-center text-white text-sm font-bold tracking-wider">
+        {gameStatus === "won" ? "GIGA CHAD MOVE!" : ""}
+        {gameStatus === "lost" ? `MAJOR COPE. IT WAS ${targetWord}` : ""}
+      </div>
+
     </div>
   );
 }

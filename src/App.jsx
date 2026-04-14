@@ -25,7 +25,7 @@ const getGuessStatuses = (guess, target) => {
 };
 
 export default function App() {
-  const [targetMeme, setTargetMeme] = useState(null); // Now holds { word, image }
+  const [targetMeme, setTargetMeme] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameStatus, setGameStatus] = useState("playing"); 
@@ -34,7 +34,7 @@ export default function App() {
   // Initialize state by checking localStorage first
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("memedle-theme");
-    return savedTheme === "dark"; // Returns true if "dark", false if anything else or null
+    return savedTheme === "dark"; 
   });
 
   // Save to localStorage every time isDarkMode changes
@@ -80,7 +80,7 @@ export default function App() {
 
   // Wait until the meme is loaded before rendering the UI
   if (!targetMeme) return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+    <div className="min-h-screen bg-[#E0A016] flex items-center justify-center font-imprima">
       Loading...
     </div>
   );
@@ -93,53 +93,50 @@ export default function App() {
   const dleTextColor = "text-[#FFF9F9]";
 
 return (
-    <div className={`min-h-screen flex flex-col items-center pt-10 px-4 pb-10 transition-colors duration-300 ${bgColor} font-imprima relative`}>
+    <div className={`min-h-screen flex flex-col items-center pt-8 sm:pt-10 px-4 pb-10 transition-colors duration-300 ${bgColor} font-imprima relative`}>
       
       {/* Theme Toggle Icon (Upper Right) */}
       <button 
         onClick={() => setIsDarkMode(!isDarkMode)}
-        className="absolute top-6 right-6 p-2 rounded-full hover:bg-black/20 transition-colors"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full hover:bg-black/20 transition-colors"
       >
-        {isDarkMode ? (
-          // Sun Icon (Dark Mode)
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-        ) : (
-          // Moon Icon (Light Mode)
-          <svg className="w-6 h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-        )}
-      </button>
+      
+      {isDarkMode ? (
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+              ) : (
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+              )}
+            </button>
 
       {/* Title */}
-      <header className="mb-6 text-center w-full max-w-sm relative">
-        <h1 className="text-5xl tracking-widest mt-2">
-          <span className={memeTextColor}>MEME</span>
-          <span className={dleTextColor}> - DLE</span>
-        </h1>
+      <header className="mb-4 sm:mb-6 text-center w-full max-w-sm relative mt-4 sm:mt-0">
+            <h1 className="text-4xl sm:text-5xl tracking-widest mt-2">
+              <span className={memeTextColor}>MEME</span>
+              <span className={dleTextColor}> - DLE</span>
+            </h1>
       </header>
 
       {/* Meme Image Hint */}
-      <div className="mb-8 w-full max-w-sm flex justify-center">
+      <div className="mb-6 sm:mb-8 w-full max-w-sm flex justify-center">
         <img 
           src={targetMeme.image} 
           alt="Guess this meme" 
-          className="max-w-full h-60 sm:h-60 object-cover rounded-sm border-none opacity-80"
+          className="max-w-full h-24 sm:h-32 md:h-48 object-cover rounded-sm border-none opacity-80"
         />
       </div>
 
       {/* Game Grid */}
-      <div className="flex flex-col gap-[6px] w-full items-center">
+      <div className="flex flex-col gap-[3px] sm:gap-[6px] w-full items-center">
         {guesses.map((guess, rowIndex) => {
           const statuses = getGuessStatuses(guess, targetWord);
           return (
-            <div key={rowIndex} className="flex gap-[6px] justify-center">
+            <div key={rowIndex} className="flex gap-[3px] sm:gap-[6px] justify-center">
               {guess.split("").map((letter, i) => {
-                // Determine evaluated colors
-                let tileColor = "bg-[#D9D9D9] text-black"; // Default from Figma
-
+                let tileColor = "bg-[#D9D9D9] text-black"; 
+                
                 if (statuses[i] === "correct") {
                   tileColor = "bg-green-600 text-white";
                 } else if (statuses[i] === "present") {
-                  // dark mode = yellow, light mode = blue
                   tileColor = isDarkMode ? "bg-yellow-500 text-white" : "bg-blue-500 text-white";
                 } else if (statuses[i] === "absent") {
                   tileColor = "bg-gray-600 text-white";
@@ -148,7 +145,7 @@ return (
                 return (
                   <div
                     key={i}
-                    className={`flex items-center justify-center text-xl font-bold uppercase ${tileColor} w-[62px] h-[62px]`}
+                    className={`flex items-center justify-center text-lg sm:text-xl font-bold uppercase ${tileColor} w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]`}
                   >
                     {letter}
                   </div>
@@ -160,11 +157,11 @@ return (
 
         {/* Render Current Guess Row */}
         {gameStatus === "playing" && guesses.length < MAX_GUESSES && (
-          <div className="flex gap-[6px] justify-center">
+          <div className="flex gap-[3px] sm:gap-[6px] justify-center">
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className={`flex items-center justify-center text-xl font-bold uppercase bg-[#D9D9D9] text-black w-[62px] h-[62px]
+                className={`flex items-center justify-center text-lg sm:text-xl font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
                   ${currentGuess[i] ? "ring-2 ring-black/30" : ""}`}
               >
                 {currentGuess[i] || ""}
@@ -174,14 +171,14 @@ return (
         )}
 
         {/* Render Empty Future Rows */}
-        {Array.from({
+      {Array.from({
           length: Math.max(0, MAX_GUESSES - guesses.length - (gameStatus === "playing" ? 1 : 0)),
         }).map((_, rowIndex) => (
-          <div key={`empty-${rowIndex}`} className="flex gap-[6px] justify-center">
+          <div key={`empty-${rowIndex}`} className="flex gap-[3px] sm:gap-[6px] justify-center">
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className="bg-[#D9D9D9] w-[62px] h-[62px]"
+                className="bg-[#D9D9D9] w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]"
               ></div>
             ))}
           </div>
@@ -190,12 +187,11 @@ return (
 
       {/* Game Over Block (replaces the green box in Figma) */}
       <div 
-        className={`mt-2 w-full max-w-xs h-16 flex items-center justify-center text-white text-sm font-bold tracking-wider 
+        className={`mt-2 w-full max-w-[260px] sm:max-w-xs h-14 sm:h-16 flex items-center justify-center text-white text-xs sm:text-sm font-bold tracking-wider 
           ${gameStatus === "lost" ? "bg-red-600" : "bg-[#365e1b]"}
         `}
       >
-
-        {gameStatus === "won" ? "GIGA CHAD MOVE!": ""}
+        {gameStatus === "won" ? "GIGA CHAD MOVE!" : ""}
         {gameStatus === "lost" ? `MAJOR COPE. IT WAS ${targetWord}` : ""}
       </div>
 

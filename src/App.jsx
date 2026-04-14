@@ -24,6 +24,13 @@ const getGuessStatuses = (guess, target) => {
   return statuses;
 };
 
+// Keyboard Layout Matrix
+const KEYBOARD_ROWS = [
+  ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+  ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+  ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE"]
+];
+
 export default function App() {
   const [targetMeme, setTargetMeme] = useState(null);
   const [guesses, setGuesses] = useState([]);
@@ -47,38 +54,42 @@ export default function App() {
     setTargetMeme(getRandomMeme());
   }, []);
 
-  // Handle Physical Keyboard Input
-  useEffect(() => {
-    if (!targetMeme) return;
-    const targetWord = targetMeme.word.replace("-", ""); // Ignore hyphens in words like ROLL-SAFE
+// Universal Input Handler for both physical and on-screen keyboards
+  const handleInput = (key) => {
+    if (gameStatus !== "playing" || !targetMeme) return;
+    const targetWord = targetMeme.word.replace("-", "");
 
-    const handleKeyDown = (e) => {
-      if (gameStatus !== "playing") return;
-
-      if (e.key === "Enter") {
-        if (currentGuess.length === targetWord.length) {
-          const newGuesses = [...guesses, currentGuess];
-          setGuesses(newGuesses);
-          
-          if (currentGuess === targetWord) {
-            setGameStatus("won");
-          } else if (newGuesses.length >= MAX_GUESSES) {
-            setGameStatus("lost");
-          }
-          setCurrentGuess(""); 
+    if (key === "ENTER") {
+      if (currentGuess.length === targetWord.length) {
+        const newGuesses = [...guesses, currentGuess];
+        setGuesses(newGuesses);
+        
+        if (currentGuess === targetWord) {
+          setGameStatus("won");
+        } else if (newGuesses.length >= MAX_GUESSES) {
+          setGameStatus("lost");
         }
-      } else if (e.key === "Backspace") {
-        setCurrentGuess((prev) => prev.slice(0, -1));
-      } else if (/^[A-Za-z]$/.test(e.key) && currentGuess.length < targetWord.length) {
-        setCurrentGuess((prev) => prev + e.key.toUpperCase());
+        setCurrentGuess(""); 
       }
+    } else if (key === "BACKSPACE") {
+      setCurrentGuess((prev) => prev.slice(0, -1));
+    } else if (/^[A-Z]$/.test(key) && currentGuess.length < targetWord.length) {
+      setCurrentGuess((prev) => prev + key);
+    }
+  };
+
+// Handle Physical Keyboard Input
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") handleInput("ENTER");
+      else if (e.key === "Backspace") handleInput("BACKSPACE");
+      else if (/^[a-zA-Z]$/.test(e.key)) handleInput(e.key.toUpperCase());
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess, gameStatus, targetMeme, guesses]);
+  }, [currentGuess, gameStatus, targetMeme, guesses]); // Dependencies included so handleInput uses fresh state
 
-  // Wait until the meme is loaded before rendering the UI
   if (!targetMeme) return (
     <div className="min-h-screen bg-[#E0A016] flex items-center justify-center font-imprima">
       Loading...
@@ -86,6 +97,23 @@ export default function App() {
   );
 
   const targetWord = targetMeme.word.replace("-", "");
+
+  // Calculate keyboard letter statuses dynamically
+  const keyStatuses = {};
+  guesses.forEach((guess) => {
+    const statuses = getGuessStatuses(guess, targetWord);
+    guess.split("").forEach((letter, i) => {
+      const status = statuses[i];
+      // Only upgrade a key's status, never downgrade it (e.g., correct stays correct)
+      if (status === "correct") {
+        keyStatuses[letter] = "correct";
+      } else if (status === "present" && keyStatuses[letter] !== "correct") {
+        keyStatuses[letter] = "present";
+      } else if (status === "absent" && !keyStatuses[letter]) {
+        keyStatuses[letter] = "absent";
+      }
+    });
+  });
 
   // dynamic theme colors
   const bgColor = isDarkMode ? "bg-[#333333]" : "bg-[#E0A016]";
@@ -185,14 +213,53 @@ return (
         ))}
       </div>
 
-      {/* Game Over Block (replaces the green box in Figma) */}
+      {/* Game Over Block */}
       <div 
         className={`mt-2 w-full max-w-[260px] sm:max-w-xs h-14 sm:h-16 flex items-center justify-center text-white text-xs sm:text-sm font-bold tracking-wider 
           ${gameStatus === "lost" ? "bg-red-600" : "bg-[#365e1b]"}
         `}
       >
-        {gameStatus === "won" ? "GIGA CHAD MOVE!" : ""}
-        {gameStatus === "lost" ? `MAJOR COPE. IT WAS ${targetWord}` : ""}
+        {gameStatus === "won" ? "HUGE W!" : ""}
+        {gameStatus === "lost" ? `L. IT WAS "${targetWord}"` : ""}
+      </div>
+
+{/* On-Screen Keyboard */}
+      <div className="mt-4 sm:mt-6 w-full max-w-[500px] flex flex-col gap-[6px] sm:gap-2">
+        {KEYBOARD_ROWS.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex justify-center gap-[4px] sm:gap-2">
+            {row.map((key) => {
+              // Determine Key Color
+              let keyBgColor = "bg-[#D9D9D9] text-black"; 
+              if (keyStatuses[key] === "correct") keyBgColor = "bg-green-600 text-white";
+              else if (keyStatuses[key] === "present") keyBgColor = isDarkMode ? "bg-yellow-500 text-white" : "bg-blue-500 text-white";
+              else if (keyStatuses[key] === "absent") keyBgColor = "bg-gray-600 text-white opacity-60";
+
+              const isActionKey = key === "ENTER" || key === "BACKSPACE";
+
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleInput(key)}
+                  className={`
+                    ${keyBgColor} 
+                    ${isActionKey ? "px-2 sm:px-4 text-[10px] sm:text-xs" : "flex-1 text-sm sm:text-base"} 
+                    h-12 sm:h-14 font-bold rounded uppercase flex items-center justify-center 
+                    active:scale-95 transition-transform select-none shadow-sm
+                  `}
+                >
+                  {key === "BACKSPACE" ? (
+                    // SVG Icon for Backspace looks much cleaner on mobile than the long word
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 sm:w-6 sm:h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" />
+                    </svg>
+                  ) : (
+                    key
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
 
     </div>

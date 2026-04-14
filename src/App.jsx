@@ -31,7 +31,16 @@ export default function App() {
   const [gameStatus, setGameStatus] = useState("playing"); 
 
   // Dark Mode
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  // Initialize state by checking localStorage first
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("memedle-theme");
+    return savedTheme === "dark"; // Returns true if "dark", false if anything else or null
+  });
+
+  // Save to localStorage every time isDarkMode changes
+  useEffect(() => {
+    localStorage.setItem("memedle-theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
 
   // Initialize the game
   useEffect(() => {
@@ -113,7 +122,7 @@ return (
         <img 
           src={targetMeme.image} 
           alt="Guess this meme" 
-          className="max-w-full h-32 sm:h-48 object-cover rounded-sm border-none opacity-80"
+          className="max-w-full h-60 sm:h-60 object-cover rounded-sm border-none opacity-80"
         />
       </div>
 
@@ -180,8 +189,13 @@ return (
       </div>
 
       {/* Game Over Block (replaces the green box in Figma) */}
-      <div className="mt-2 w-full max-w-xs h-16 bg-[#365e1b] flex items-center justify-center text-white text-sm font-bold tracking-wider">
-        {gameStatus === "won" ? "GIGA CHAD MOVE!" : ""}
+      <div 
+        className={`mt-2 w-full max-w-xs h-16 flex items-center justify-center text-white text-sm font-bold tracking-wider 
+          ${gameStatus === "lost" ? "bg-red-600" : "bg-[#365e1b]"}
+        `}
+      >
+
+        {gameStatus === "won" ? "GIGA CHAD MOVE!": ""}
         {gameStatus === "lost" ? `MAJOR COPE. IT WAS ${targetWord}` : ""}
       </div>
 

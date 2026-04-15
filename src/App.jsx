@@ -101,6 +101,14 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentGuess, gameStatus, targetMeme, guesses]); // Dependencies included so handleInput uses fresh state
 
+  const resetGame = () => {
+    setTargetMeme(getRandomMeme()); // Picks a new meme
+    setGuesses([]);                 // Clears the board
+    setCurrentGuess("");            // Clears the active row
+    setGameStatus("playing");       // Resets the win/loss state
+    setToast("");                   // Clears any stuck pop-ups
+  };
+
   if (!targetMeme) return (
     <div className="min-h-screen bg-[#E0A016] flex items-center justify-center font-imprima">
       Loading...
@@ -245,11 +253,44 @@ return (
       {/* Game Over Block */}
       <div 
         className={`mt-2 w-full max-w-[260px] sm:max-w-xs h-14 sm:h-16 flex items-center justify-center text-white text-xs sm:text-sm font-bold tracking-wider 
-          ${gameStatus === "lost" ? "bg-red-600" : "bg-[#365e1b]"}
+          ${gameStatus === "lost" ? "bg-red-600" : (gameStatus === "won" ? "bg-[#365e1b]" : "opacity-0")}
         `}
       >
         {gameStatus === "won" ? "HUGE W!" : ""}
         {gameStatus === "lost" ? `L. IT WAS "${targetWord}"` : ""}
+      </div>
+
+      <div className="mt-6 sm:mt-8 w-full max-w-[260px] sm:max-w-sm flex justify-center items-center gap-3 sm:gap-4">
+
+      {/* Reveal Button */}
+        {gameStatus === "playing" && (
+          <button 
+            onClick={() => setGameStatus("lost")}
+            className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold rounded uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1
+              ${isDarkMode ? "bg-red-900/40 text-red-300 hover:bg-red-800/60" : "bg-red-100 text-red-700 hover:bg-red-200"}
+            `}
+          >
+            {/* Eye Icon */}
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Reveal
+          </button>
+        )}
+
+        {/* Reset Button */}
+        <button 
+          onClick={resetGame}
+          className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold rounded uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1
+            ${isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-white text-black hover:bg-black/20"}
+          `}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 sm:w-4 sm:h-4">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          Next Meme
+        </button>
       </div>
 
 {/* On-Screen Keyboard */}

@@ -206,15 +206,23 @@ return (
         {/* Current Guess Row (with Pop Animation) */}
         {gameStatus === "playing" && guesses.length < MAX_GUESSES && (
           <div className="flex gap-[3px] sm:gap-[6px] justify-center">
-            {Array.from({ length: targetWord.length }).map((_, i) => (
+            {Array.from({ length: targetWord.length }).map((_, i) => {
+
+              const isLastTypedTile = i === currentGuess.length - 1;
+
+            return (
               <div
                 key={i}
+                onClick={isLastTypedTile ? () => handleInput("BACKSPACE") : undefined}
                 className={`flex items-center justify-center text-lg sm:text-xl rounded font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
-                  ${currentGuess[i] ? "animate-pop ring-2 ring-black/30" : ""}`}
+                  ${currentGuess[i] ? "animate-pop ring-2 ring-black/30" : ""}
+                  ${isLastTypedTile ? "cursor-pointer hover:bg-white/10" : ""}
+                `}
               >
                 {currentGuess[i] || ""}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
 

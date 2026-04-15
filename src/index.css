@@ -4,3 +4,39 @@
 @theme {
   --font-imprima: "Imprima", monospace;
 }
+
+/* Typing "Pop" Animation */
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); } /* Scales up 15% */
+  100% { transform: scale(1); }
+}
+.animate-pop {
+  animation: pop 0.15s ease-in-out;
+}
+
+/* Flip Reveal */
+@keyframes flipReveal {
+  0% { 
+    transform: rotateX(0); 
+    background-color: #D9D9D9; 
+    color: black; 
+  }
+  49% {
+    background-color: #D9D9D9; 
+    color: black; 
+  }
+  50% { 
+    transform: rotateX(90deg); /* Edged towards the camera, hiding the color swap */
+    background-color: var(--final-bg); 
+    color: white; 
+  }
+  100% { 
+    transform: rotateX(0); 
+    background-color: var(--final-bg); 
+    color: white; 
+  }
+}
+.animate-flip {
+  animation: flipReveal 1s ease-in-out forwards;
+}

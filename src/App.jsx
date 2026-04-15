@@ -154,13 +154,6 @@ return (
             </h1>
       </header>
 
-      {/* Too short Toast */}
-      {toast && (
-        <div className="fixed bottom-120 z-50 bg-white/90 text-black px-10 py-4 rounded-lg shadow-sm font-bold text-sm tracking-widest uppercase transition-opacity duration-300">
-          {toast}
-        </div>
-      )}
-
       {/* Meme Image Hint */}
       <div className="mb-6 sm:mb-8 w-full max-w-sm flex justify-center">
         <img 
@@ -170,27 +163,37 @@ return (
         />
       </div>
 
-      {/* Game Grid */}
-      <div className="flex flex-col gap-[3px] sm:gap-[6px] w-full items-center">
-        {guesses.map((guess, rowIndex) => {
+      {/* Grid Anchor Container */}
+      <div className="relative flex flex-col gap-[3px] sm:gap-[6px] w-full items-center perspective-1000">
+        
+        {/* Centered "Too Short" Toast inside the Grid */}
+        {toast && (
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white text-black px-8 py-3 rounded-lg shadow-2xl font-bold text-sm tracking-widest uppercase transition-opacity duration-300">
+            {toast}
+          </div>
+        )}
+
+      {/* Game Grid w Animation */}
+      {guesses.map((guess, rowIndex) => {
           const statuses = getGuessStatuses(guess, targetWord);
           return (
             <div key={rowIndex} className="flex gap-[3px] sm:gap-[6px] justify-center">
               {guess.split("").map((letter, i) => {
-                let tileColor = "bg-[#D9D9D9] text-black"; 
                 
-                if (statuses[i] === "correct") {
-                  tileColor = "bg-green-600 text-white";
-                } else if (statuses[i] === "present") {
-                  tileColor = isDarkMode ? "bg-yellow-500 text-white" : "bg-blue-500 text-white";
-                } else if (statuses[i] === "absent") {
-                  tileColor = "bg-gray-600 text-white";
-                }
+                // We define the EXACT hex colors here so we can pass them to the CSS Animation variable
+                let finalBgHex = "#D9D9D9"; 
+                if (statuses[i] === "correct") finalBgHex = "#16a34a"; // green-600
+                else if (statuses[i] === "present") finalBgHex = isDarkMode ? "#eab308" : "#3b82f6"; 
+                else if (statuses[i] === "absent") finalBgHex = "#4b5563"; // gray-600
 
                 return (
                   <div
                     key={i}
-                    className={`flex items-center justify-center text-lg sm:text-xl font-bold uppercase ${tileColor} w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]`}
+                    className="flex items-center justify-center text-lg sm:text-xl rounded font-bold uppercase w-[30px] h-[30px] sm:w-[62px] sm:h-[62px] animate-flip"
+                    style={{
+                      "--final-bg": finalBgHex,        // Injects the target color into our CSS file
+                      animationDelay: `${i * 0.15}s`, // Each tile waits 0.15s longer than the last!
+                    }}
                   >
                     {letter}
                   </div>
@@ -200,14 +203,14 @@ return (
           );
         })}
 
-        {/* Render Current Guess Row */}
+        {/* Current Guess Row (with Pop Animation) */}
         {gameStatus === "playing" && guesses.length < MAX_GUESSES && (
           <div className="flex gap-[3px] sm:gap-[6px] justify-center">
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className={`flex items-center justify-center text-lg sm:text-xl font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
-                  ${currentGuess[i] ? "ring-2 ring-black/30" : ""}`}
+                className={`flex items-center justify-center text-lg sm:text-xl rounded font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
+                  ${currentGuess[i] ? "animate-pop ring-2 ring-black/30" : ""}`}
               >
                 {currentGuess[i] || ""}
               </div>
@@ -215,7 +218,7 @@ return (
           </div>
         )}
 
-        {/* Render Empty Future Rows */}
+      {/* Render Empty Future Rows */}
       {Array.from({
           length: Math.max(0, MAX_GUESSES - guesses.length - (gameStatus === "playing" ? 1 : 0)),
         }).map((_, rowIndex) => (
@@ -223,7 +226,7 @@ return (
             {Array.from({ length: targetWord.length }).map((_, i) => (
               <div
                 key={i}
-                className="bg-[#D9D9D9] w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]"
+                className="bg-[#D9D9D9] rounded w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]"
               ></div>
             ))}
           </div>

@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 import { getRandomMeme } from "./MemeData";
 
 const MAX_GUESSES = 6;
@@ -290,7 +290,7 @@ return (
           </div>
         ))}
       </div>
-
+        <Analytics />
     </div>
   );
 }

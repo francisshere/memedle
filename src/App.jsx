@@ -38,6 +38,7 @@ export default function App() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameStatus, setGameStatus] = useState("playing"); 
   const [toast, setToast] = useState("");
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   // Dark Mode
   // Initialize state by checking localStorage first
@@ -142,6 +143,18 @@ export default function App() {
 return (
     <div className={`min-h-screen flex flex-col items-center pt-8 sm:pt-10 px-4 pb-10 transition-colors duration-300 ${bgColor} font-imprima relative`}>
       
+      <div className="absolute top-4 right-15 sm:top-6 sm:right-20 flex gap-2 sm:gap-3 z-40">
+      {/* Info Icon (Upper Right) */}
+      <button 
+          onClick={() => setIsInfoOpen(true)}
+          className="p-2 rounded-full hover:bg-black/20 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-5 h-5 sm:w-6 sm:h-6 ${isDarkMode ? "text-white" : "text-black"}`}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+          </svg>
+        </button>
+      </div>
+
       {/* Theme Toggle Icon (Upper Right) */}
       <button 
         onClick={() => setIsDarkMode(!isDarkMode)}
@@ -181,6 +194,50 @@ return (
             {toast}
           </div>
         )}
+
+{/* Information Dialog Modal */}
+      {isInfoOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className={`w-full max-w-md rounded-lg shadow-2xl p-6 relative ${isDarkMode ? "bg-[#333333] text-gray-200 border border-gray-600" : "bg-[#FFF9F9] text-black"}`}>
+            
+            {/* Close 'X' Button */}
+            <button 
+              onClick={() => setIsInfoOpen(false)}
+              className="absolute top-4 right-4 p-1 rounded hover:bg-black/10 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Modal Content */}
+            <h2 className="text-2xl font-bold tracking-widest mb-4">HOW TO PLAY</h2>
+            
+            <p className="text-sm sm:text-base mb-4 leading-relaxed">
+              Welcome to <span className="font-bold">MeMe-dle</span>, where your classic game of Wordle meets the chaos of all memes throughout mankind's history. 
+            </p>
+            <p className="text-sm sm:text-base mb-4 leading-relaxed">
+              It is not perfect and some of the answers might be confusing, so here are some tips:
+            </p>
+
+            <ul className="list-disc pl-5 text-sm sm:text-base flex flex-col gap-2 mb-6">
+              <li>The ANSWER might come from how it's commonly known.</li>
+              <li>The ANSWER might come from the affiliated person, event, or game.</li>
+              <li>The ANSWER might come from keywords associated with the image's text, origin, or viral punchline.</li>
+            </ul>
+
+            {/* Accept Button */}
+            <button 
+              onClick={() => setIsInfoOpen(false)}
+              className={`w-full py-3 font-bold tracking-widest uppercase rounded transition-transform active:scale-95
+                ${isDarkMode ? "bg-white text-black hover:bg-gray-200" : "bg-black text-white hover:bg-gray-800"}
+              `}
+            >
+              Let's Go
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Game Grid w Animation */}
       {guesses.map((guess, rowIndex) => {

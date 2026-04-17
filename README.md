@@ -1,5 +1,9 @@
 ## 📜 Patch Notes
 
+### [v1.2.2] - 2026-04-17
+**Added:**
+* 50 more memes!!
+
 ### [v1.2.1] - 2026-04-15
 **Added:**
 * Reveal Meme Button

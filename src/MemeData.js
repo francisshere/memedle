@@ -78,7 +78,7 @@ export const memeData = [
   { word: "AMBASING", image: "https://i.imgflip.com/736pg8.jpg" },
   { word: "TROLL", image: "https://imgflip.com/s/meme/Troll-Face.jpg" },
   { word: "DIABEETUS", image: "https://i.imgflip.com/svcml.jpg" },
-  { word: "STAREDAD", image: "https://i.imgflip.com/svcml.jpg" },
+  { word: "STAREDAD", image: "https://i.imgflip.com/tcj1d.jpg" },
   { word: "KONAMI", image: "https://i.imgflip.com/1id6o5.jpg" },
   { word: "BADGER", image: "https://i.imgflip.com/3dgtk7.jpg" },
   { word: "LOSS", image: "https://i.imgflip.com/2126xr.jpg" },

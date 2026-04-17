@@ -1,5 +1,9 @@
 ## 📜 Patch Notes
 
+### [v1.3.0] - 2026-04-17
+**Added:**
+* Inormation/Help Buton
+
 ### [v1.2.2] - 2026-04-17
 **Added:**
 * 50 more memes!!

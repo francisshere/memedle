@@ -116,7 +116,7 @@ export const memeData = [
   { word: "HACKER", image: "https://i.imgflip.com/2zte8w.png" },
   { word: "DOWNFALL", image: "https://i.imgflip.com/8tsxeu.png" },
   { word: "GHOST", image: "https://i.imgflip.com/71t1ia.png" },
-  { word: "COOMER", image: "https://i.imgflip.com/736pg8.jpg" },
+  { word: "COOMER", image: "https://i.imgflip.com/4vms6e.png" },
   { word: "KRONK", image: "https://i.imgflip.com/60qb3t.jpg" },
   { word: "LINUS", image: "https://i.imgflip.com/3i73e0.jpg" },
   { word: "BIBBLE", image: "https://i.imgflip.com/2l299s.jpg" },

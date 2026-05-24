@@ -223,7 +223,7 @@ export default function App() {
               <ul className="list-disc pl-5 text-sm sm:text-base flex flex-col gap-2 mb-6">
                 <li>The ANSWER might come from how it's commonly known.</li>
                 <li>The ANSWER might come from the affiliated person, event, or game.</li>
-                <li>The ANSWER might come from the the movie/series it originated.</li>
+                <li>The ANSWER CAN BE ON THE FORM OF ACRONYM.</li>
                 <li>The ANSWER might come from keywords associated with the image's text, origin, or viral punchline.</li>
               </ul>
 

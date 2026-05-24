@@ -12,14 +12,14 @@ const getGuessStatuses = (guess, target) => {
   for (let i = 0; i < guess.length; i++) {
     if (guess[i] === target[i]) {
       statuses[i] = "correct";
-      targetChars[i] = null; 
+      targetChars[i] = null;
     }
   }
 
   for (let i = 0; i < guess.length; i++) {
     if (statuses[i] !== "correct" && targetChars.includes(guess[i])) {
       statuses[i] = "present";
-      targetChars[targetChars.indexOf(guess[i])] = null; 
+      targetChars[targetChars.indexOf(guess[i])] = null;
     }
   }
   return statuses;
@@ -36,7 +36,7 @@ export default function App() {
   const [targetMeme, setTargetMeme] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
-  const [gameStatus, setGameStatus] = useState("playing"); 
+  const [gameStatus, setGameStatus] = useState("playing");
   const [toast, setToast] = useState("");
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
@@ -44,7 +44,7 @@ export default function App() {
   // Initialize state by checking localStorage first
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("memedle-theme");
-    return savedTheme === "dark"; 
+    return savedTheme === "dark";
   });
 
   // Save to localStorage every time isDarkMode changes
@@ -57,7 +57,7 @@ export default function App() {
     setTargetMeme(getRandomMeme());
   }, []);
 
-// Universal Input Handler for both physical and on-screen keyboards
+  // Universal Input Handler for both physical and on-screen keyboards
   const handleInput = (key) => {
     if (gameStatus !== "playing" || !targetMeme) return;
     const targetWord = targetMeme.word.replace("-", "");
@@ -74,14 +74,14 @@ export default function App() {
       if (currentGuess.length === targetWord.length) {
         const newGuesses = [...guesses, currentGuess];
         setGuesses(newGuesses);
-        
+
         // full word logic
         if (currentGuess === targetWord) {
           setGameStatus("won");
         } else if (newGuesses.length >= MAX_GUESSES) {
           setGameStatus("lost");
         }
-        setCurrentGuess(""); 
+        setCurrentGuess("");
       }
     } else if (key === "BACKSPACE") {
       setCurrentGuess((prev) => prev.slice(0, -1));
@@ -90,7 +90,7 @@ export default function App() {
     }
   };
 
-// Handle Physical Keyboard Input
+  // Handle Physical Keyboard Input
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Enter") handleInput("ENTER");
@@ -140,12 +140,12 @@ export default function App() {
   const memeTextColor = isDarkMode ? "text-[#09CD0F]" : "text-[#06810A]";
   const dleTextColor = "text-[#FFF9F9]";
 
-return (
+  return (
     <div className={`min-h-screen flex flex-col items-center pt-8 sm:pt-10 px-4 pb-10 transition-colors duration-300 ${bgColor} font-imprima relative`}>
-      
+
       <div className="absolute top-4 right-15 sm:top-6 sm:right-20 flex gap-2 sm:gap-3 z-40">
-      {/* Info Icon (Upper Right) */}
-      <button 
+        {/* Info Icon (Upper Right) */}
+        <button
           onClick={() => setIsInfoOpen(true)}
           className="p-2 rounded-full hover:bg-black/20 transition-colors"
         >
@@ -156,38 +156,38 @@ return (
       </div>
 
       {/* Theme Toggle Icon (Upper Right) */}
-      <button 
+      <button
         onClick={() => setIsDarkMode(!isDarkMode)}
         className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 rounded-full hover:bg-black/20 transition-colors"
       >
-      
-      {isDarkMode ? (
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-              ) : (
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-              )}
-            </button>
+
+        {isDarkMode ? (
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        ) : (
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        )}
+      </button>
 
       {/* Title */}
       <header className="mb-4 sm:mb-6 text-center w-full max-w-sm relative mt-4 sm:mt-0">
-            <h1 className="text-4xl sm:text-5xl tracking-widest mt-2">
-              <span className={memeTextColor}>MEME</span>
-              <span className={dleTextColor}> - DLE</span>
-            </h1>
+        <h1 className="text-4xl sm:text-5xl tracking-widest mt-2">
+          <span className={memeTextColor}>MEME</span>
+          <span className={dleTextColor}> - DLE</span>
+        </h1>
       </header>
 
       {/* Meme Image Hint */}
       <div className="mb-6 sm:mb-8 w-full max-w-sm flex justify-center">
-        <img 
-          src={targetMeme.image} 
-          alt="Guess this meme" 
+        <img
+          src={targetMeme.image}
+          alt="Guess this meme"
           className="max-w-full h-24 sm:h-32 md:h-48 object-cover rounded-sm border-none opacity-80"
         />
       </div>
 
       {/* Grid Anchor Container */}
       <div className="relative flex flex-col gap-[3px] sm:gap-[6px] w-full items-center perspective-1000">
-        
+
         {/* Centered "Too Short" Toast inside the Grid */}
         {toast && (
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white text-black px-8 py-3 rounded-lg shadow-2xl font-bold text-sm tracking-widest uppercase transition-opacity duration-300">
@@ -195,61 +195,62 @@ return (
           </div>
         )}
 
-{/* Information Dialog Modal */}
-      {isInfoOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className={`w-full max-w-md rounded-lg shadow-2xl p-6 relative ${isDarkMode ? "bg-[#333333] text-gray-200 border border-gray-600" : "bg-[#FFF9F9] text-black"}`}>
-            
-            {/* Close 'X' Button */}
-            <button 
-              onClick={() => setIsInfoOpen(false)}
-              className="absolute top-4 right-4 p-1 rounded hover:bg-black/10 transition-colors"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+        {/* Information Dialog Modal */}
+        {isInfoOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className={`w-full max-w-md rounded-lg shadow-2xl p-6 relative ${isDarkMode ? "bg-[#333333] text-gray-200 border border-gray-600" : "bg-[#FFF9F9] text-black"}`}>
 
-            {/* Modal Content */}
-            <h2 className="text-2xl font-bold tracking-widest mb-4">HOW TO PLAY</h2>
-            
-            <p className="text-sm sm:text-base mb-4 leading-relaxed">
-              Welcome to <span className="font-bold">MeMe-dle</span>, where your classic game of Wordle meets the chaos of all memes throughout mankind's history. 
-            </p>
-            <p className="text-sm sm:text-base mb-4 leading-relaxed">
-              It is not perfect and some of the answers might be confusing, so here are some tips:
-            </p>
+              {/* Close 'X' Button */}
+              <button
+                onClick={() => setIsInfoOpen(false)}
+                className="absolute top-4 right-4 p-1 rounded hover:bg-black/10 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
 
-            <ul className="list-disc pl-5 text-sm sm:text-base flex flex-col gap-2 mb-6">
-              <li>The ANSWER might come from how it's commonly known.</li>
-              <li>The ANSWER might come from the affiliated person, event, or game.</li>
-              <li>The ANSWER might come from keywords associated with the image's text, origin, or viral punchline.</li>
-            </ul>
+              {/* Modal Content */}
+              <h2 className="text-2xl font-bold tracking-widest mb-4">HOW TO PLAY</h2>
 
-            {/* Accept Button */}
-            <button 
-              onClick={() => setIsInfoOpen(false)}
-              className={`w-full py-3 font-bold tracking-widest uppercase rounded transition-transform active:scale-95
+              <p className="text-sm sm:text-base mb-4 leading-relaxed">
+                Welcome to <span className="font-bold">MeMe-dle</span>, where your classic game of Wordle meets the chaos of all memes throughout mankind's history.
+              </p>
+              <p className="text-sm sm:text-base mb-4 leading-relaxed">
+                It is not perfect and some of the answers might be confusing, so here are some tips:
+              </p>
+
+              <ul className="list-disc pl-5 text-sm sm:text-base flex flex-col gap-2 mb-6">
+                <li>The ANSWER might come from how it's commonly known.</li>
+                <li>The ANSWER might come from the affiliated person, event, or game.</li>
+                <li>The ANSWER might come from the the movie/series it originated.</li>
+                <li>The ANSWER might come from keywords associated with the image's text, origin, or viral punchline.</li>
+              </ul>
+
+              {/* Accept Button */}
+              <button
+                onClick={() => setIsInfoOpen(false)}
+                className={`w-full py-3 font-bold tracking-widest uppercase rounded transition-transform active:scale-95
                 ${isDarkMode ? "bg-white text-black hover:bg-gray-200" : "bg-black text-white hover:bg-gray-800"}
               `}
-            >
-              Let's Go
-            </button>
+              >
+                Let's Go
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Game Grid w Animation */}
-      {guesses.map((guess, rowIndex) => {
+        {/* Game Grid w Animation */}
+        {guesses.map((guess, rowIndex) => {
           const statuses = getGuessStatuses(guess, targetWord);
           return (
             <div key={rowIndex} className="flex gap-[3px] sm:gap-[6px] justify-center">
               {guess.split("").map((letter, i) => {
-                
+
                 // We define the EXACT hex colors here so we can pass them to the CSS Animation variable
-                let finalBgHex = "#D9D9D9"; 
+                let finalBgHex = "#D9D9D9";
                 if (statuses[i] === "correct") finalBgHex = "#16a34a"; // green-600
-                else if (statuses[i] === "present") finalBgHex = isDarkMode ? "#eab308" : "#3b82f6"; 
+                else if (statuses[i] === "present") finalBgHex = isDarkMode ? "#eab308" : "#3b82f6";
                 else if (statuses[i] === "absent") finalBgHex = "#4b5563"; // gray-600
 
                 return (
@@ -276,24 +277,24 @@ return (
 
               const isLastTypedTile = i === currentGuess.length - 1;
 
-            return (
-              <div
-                key={i}
-                onClick={isLastTypedTile ? () => handleInput("BACKSPACE") : undefined}
-                className={`flex items-center justify-center text-lg sm:text-xl rounded font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
+              return (
+                <div
+                  key={i}
+                  onClick={isLastTypedTile ? () => handleInput("BACKSPACE") : undefined}
+                  className={`flex items-center justify-center text-lg sm:text-xl rounded font-bold uppercase bg-[#D9D9D9] text-black w-[30px] h-[30px] sm:w-[62px] sm:h-[62px]
                   ${currentGuess[i] ? "animate-pop ring-2 ring-black/30" : ""}
                   ${isLastTypedTile ? "cursor-pointer hover:bg-white/10" : ""}
                 `}
-              >
-                {currentGuess[i] || ""}
+                >
+                  {currentGuess[i] || ""}
                 </div>
               );
             })}
           </div>
         )}
 
-      {/* Render Empty Future Rows */}
-      {Array.from({
+        {/* Render Empty Future Rows */}
+        {Array.from({
           length: Math.max(0, MAX_GUESSES - guesses.length - (gameStatus === "playing" ? 1 : 0)),
         }).map((_, rowIndex) => (
           <div key={`empty-${rowIndex}`} className="flex gap-[3px] sm:gap-[6px] justify-center">
@@ -308,7 +309,7 @@ return (
       </div>
 
       {/* Game Over Block */}
-      <div 
+      <div
         className={`mt-2 w-full max-w-[260px] sm:max-w-xs h-14 sm:h-16 flex items-center justify-center text-white text-xs sm:text-sm font-bold tracking-wider 
           ${gameStatus === "lost" ? "bg-red-600" : (gameStatus === "won" ? "bg-[#365e1b]" : "opacity-0")}
         `}
@@ -319,9 +320,9 @@ return (
 
       <div className="mt-6 sm:mt-8 w-full max-w-[260px] sm:max-w-sm flex justify-center items-center gap-3 sm:gap-4">
 
-      {/* Reveal Button */}
+        {/* Reveal Button */}
         {gameStatus === "playing" && (
-          <button 
+          <button
             onClick={() => setGameStatus("lost")}
             className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold rounded uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1
               ${isDarkMode ? "bg-red-900/40 text-red-300 hover:bg-red-800/60" : "bg-red-100 text-red-700 hover:bg-red-200"}
@@ -337,7 +338,7 @@ return (
         )}
 
         {/* Reset Button */}
-        <button 
+        <button
           onClick={resetGame}
           className={`px-3 py-1.5 text-[10px] sm:text-xs font-bold rounded uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1
             ${isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-white text-black hover:bg-black/20"}
@@ -350,13 +351,13 @@ return (
         </button>
       </div>
 
-{/* On-Screen Keyboard */}
+      {/* On-Screen Keyboard */}
       <div className="mt-4 sm:mt-6 w-full max-w-[500px] flex flex-col gap-[6px] sm:gap-2">
         {KEYBOARD_ROWS.map((row, rowIndex) => (
           <div key={rowIndex} className="flex justify-center gap-[4px] sm:gap-2">
             {row.map((key) => {
               // Determine Key Color
-              let keyBgColor = "bg-[#D9D9D9] text-black"; 
+              let keyBgColor = "bg-[#D9D9D9] text-black";
               if (keyStatuses[key] === "correct") keyBgColor = "bg-green-600 text-white";
               else if (keyStatuses[key] === "present") keyBgColor = isDarkMode ? "bg-yellow-500 text-white" : "bg-blue-500 text-white";
               else if (keyStatuses[key] === "absent") keyBgColor = "bg-gray-600 text-white opacity-60";
@@ -388,7 +389,7 @@ return (
           </div>
         ))}
       </div>
-        <Analytics />
+      <Analytics />
     </div>
   );
 }

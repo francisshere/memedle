@@ -1,8 +1,17 @@
 ## 📜 Patch Notes
 
+### [v1.4.0] - 2026-05-24
+**Added:**
+* 40 NEW MEMES!
+* Icon for the website
+* New rule
+
+**Fixed:**
+* Edited the Title Tag
+
 ### [v1.3.0] - 2026-04-17
 **Added:**
-* Inormation/Help Buton
+* Information/Help Buton
 
 ### [v1.2.2] - 2026-04-17
 **Added:**

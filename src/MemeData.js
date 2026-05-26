@@ -140,6 +140,7 @@ export const memeData = [
   { word: "TROMPET", image: "https://i.imgflip.com/4b5f4i.png" },
   { word: "CHOCOLATE", image: "https://i.imgflip.com/wjbma.jpg" },
   { word: "SHINJI", image: "https://i.imgflip.com/6gc97h.jpg" },
+  { word: "STARMAN", image: "https://i.imgflip.com/8n91ax.jpg" },
 ];
 
 export const getRandomMeme = () => {

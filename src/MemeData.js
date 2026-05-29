@@ -1,4 +1,11 @@
-export const memeData = [
+const ALLOWED_MEME_IMAGE_ORIGINS = new Set([
+  "https://i.imgflip.com",
+  "https://imgflip.com",
+  "https://media1.giphy.com",
+  "https://media3.giphy.com",
+]);
+
+export const memeData = Object.freeze([
   { word: "DOGE", image: "https://i.imgflip.com/4t0m5.jpg" },
   { word: "CHAD", image: "https://i.imgflip.com/35bdwf.jpg" },
   { word: "STONKS", image: "https://i.imgflip.com/3388rw.png" },
@@ -141,7 +148,19 @@ export const memeData = [
   { word: "CHOCOLATE", image: "https://i.imgflip.com/wjbma.jpg" },
   { word: "SHINJI", image: "https://i.imgflip.com/6gc97h.jpg" },
   { word: "STARMAN", image: "https://i.imgflip.com/8n91ax.jpg" },
-];
+]);
+
+export const getSafeMemeImageUrl = (image) => {
+  try {
+    const url = new URL(image);
+    if (url.protocol !== "https:" || !ALLOWED_MEME_IMAGE_ORIGINS.has(url.origin)) {
+      return "";
+    }
+    return url.href;
+  } catch {
+    return "";
+  }
+};
 
 export const getRandomMeme = () => {
   const randomIndex = Math.floor(Math.random() * memeData.length);

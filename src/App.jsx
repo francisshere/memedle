@@ -1,7 +1,7 @@
 // src/App.jsx
-import React, { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Analytics } from "@vercel/analytics/react"
-import { getRandomMeme } from "./MemeData";
+import { getRandomMeme, getSafeMemeImageUrl } from "./MemeData";
 
 const MAX_GUESSES = 6;
 
@@ -32,33 +32,40 @@ const KEYBOARD_ROWS = [
   ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "BACKSPACE"]
 ];
 
+const THEME_STORAGE_KEY = "memedle-theme";
+
+const getSavedThemePreference = () => {
+  try {
+    return localStorage.getItem(THEME_STORAGE_KEY) === "dark";
+  } catch {
+    return false;
+  }
+};
+
+const saveThemePreference = (isDarkMode) => {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? "dark" : "light");
+  } catch {
+    // Storage can be blocked in private or hardened browser modes.
+  }
+};
+
 export default function App() {
-  const [targetMeme, setTargetMeme] = useState(null);
+  const [targetMeme, setTargetMeme] = useState(() => getRandomMeme());
   const [guesses, setGuesses] = useState([]);
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameStatus, setGameStatus] = useState("playing");
   const [toast, setToast] = useState("");
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
-  // Dark Mode
-  // Initialize state by checking localStorage first
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("memedle-theme");
-    return savedTheme === "dark";
-  });
+  const [isDarkMode, setIsDarkMode] = useState(getSavedThemePreference);
 
-  // Save to localStorage every time isDarkMode changes
   useEffect(() => {
-    localStorage.setItem("memedle-theme", isDarkMode ? "dark" : "light");
+    saveThemePreference(isDarkMode);
   }, [isDarkMode]);
 
-  // Initialize the game
-  useEffect(() => {
-    setTargetMeme(getRandomMeme());
-  }, []);
-
   // Universal Input Handler for both physical and on-screen keyboards
-  const handleInput = (key) => {
+  const handleInput = useCallback((key) => {
     if (gameStatus !== "playing" || !targetMeme) return;
     const targetWord = targetMeme.word.replace("-", "");
 
@@ -88,7 +95,7 @@ export default function App() {
     } else if (/^[A-Z]$/.test(key) && currentGuess.length < targetWord.length) {
       setCurrentGuess((prev) => prev + key);
     }
-  };
+  }, [currentGuess, gameStatus, guesses, targetMeme]);
 
   // Handle Physical Keyboard Input
   useEffect(() => {
@@ -100,7 +107,7 @@ export default function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess, gameStatus, targetMeme, guesses]); // Dependencies included so handleInput uses fresh state
+  }, [handleInput]);
 
   const resetGame = () => {
     setTargetMeme(getRandomMeme()); // Picks a new meme
@@ -117,6 +124,7 @@ export default function App() {
   );
 
   const targetWord = targetMeme.word.replace("-", "");
+  const targetImage = getSafeMemeImageUrl(targetMeme.image);
 
   // Calculate keyboard letter statuses dynamically
   const keyStatuses = {};
@@ -178,11 +186,15 @@ export default function App() {
 
       {/* Meme Image Hint */}
       <div className="mb-6 sm:mb-8 w-full max-w-sm flex justify-center">
-        <img
-          src={targetMeme.image}
-          alt="Guess this meme"
-          className="max-w-full h-24 sm:h-32 md:h-48 object-cover rounded-sm border-none opacity-80"
-        />
+        {targetImage && (
+          <img
+            src={targetImage}
+            alt="Guess this meme"
+            className="max-w-full h-24 sm:h-32 md:h-48 object-cover rounded-sm border-none opacity-80"
+            decoding="async"
+            referrerPolicy="no-referrer"
+          />
+        )}
       </div>
 
       {/* Grid Anchor Container */}

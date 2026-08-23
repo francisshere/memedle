@@ -1,3 +1,5 @@
+Wordle + Memes in your web!
+
 ## 📜 Patch Notes
 
 ### [v1.4.0] - 2026-05-24
